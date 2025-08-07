@@ -86,7 +86,7 @@ const WorkflowPreview = () => {
 
   return (
     <div className={
-      'relative flex h-full flex-col rounded-l-2xl border-[0.5px] border-components-panel-border bg-components-panel-bg shadow-xl'
+      'workflow-preview relative flex h-full flex-col rounded-l-2xl border-[0.5px] border-components-panel-border bg-components-panel-bg shadow-xl'
     }
       style={{ width: `${panelWidth}px` }}
     >

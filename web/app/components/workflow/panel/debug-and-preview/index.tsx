@@ -81,7 +81,7 @@ const DebugAndPreview = () => {
   })
 
   return (
-    <div className='relative h-full'>
+    <div className='debug-and-preview relative h-full'>
       <div
         ref={triggerRef}
         className='absolute -left-1 top-0 flex h-full w-1 cursor-col-resize resize-x items-center justify-center'>
