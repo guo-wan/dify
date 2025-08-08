@@ -1,5 +1,5 @@
 <template>
-  <div class="flex mb-4">
+  <div class="flex mb-4 pr-11">
     <!-- AI头像 -->
     <div class="flex-shrink-0 mr-3">
       <div v-if="answerIcon">
@@ -9,30 +9,38 @@
         <Icon icon="ri:robot-line" class="w-4 h-4 text-white" />
       </div>
     </div>
-    
+
     <!-- 回答内容 -->
     <div ref="containerRef" class="flex-1 max-w-full">
       <div class="bg-gray-50 rounded-lg px-4 py-3 relative">
         <!-- 内容切换器（如果有多个版本） -->
         <div v-if="item.prevSibling || item.nextSibling" class="absolute top-2 right-2">
           <div class="flex items-center space-x-1 bg-white rounded-md shadow-sm border">
-            <button
+            <NButton
               :disabled="!item.prevSibling"
-              class="p-1 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+              type="default"
+              size="tiny"
+              quaternary
               @click="handleSwitchSibling('prev')"
             >
-              <Icon icon="ri:arrow-left-s-line" class="w-4 h-4" />
-            </button>
+              <template #icon>
+                <Icon icon="ri:arrow-left-s-line" class="w-4 h-4" />
+              </template>
+            </NButton>
             <span class="text-xs text-gray-500 px-1">
               {{ currentIndex }}/{{ totalSiblings }}
             </span>
-            <button
+            <NButton
               :disabled="!item.nextSibling"
-              class="p-1 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+              type="default"
+              size="tiny"
+              quaternary
               @click="handleSwitchSibling('next')"
             >
-              <Icon icon="ri:arrow-right-s-line" class="w-4 h-4" />
-            </button>
+              <template #icon>
+                <Icon icon="ri:arrow-right-s-line" class="w-4 h-4" />
+              </template>
+            </NButton>
           </div>
         </div>
 
@@ -47,8 +55,8 @@
           <!-- Agent思考过程 -->
           <div v-if="hasAgentThoughts" class="space-y-2">
             <div class="text-sm font-medium text-gray-700">思考过程:</div>
-            <div 
-              v-for="thought in agentThoughts" 
+            <div
+              v-for="thought in agentThoughts"
               :key="thought.id"
               class="bg-white rounded p-3 border-l-4 border-blue-200"
             >
@@ -64,13 +72,13 @@
           <div v-if="workflowProcess?.length" class="space-y-2">
             <div class="text-sm font-medium text-gray-700">执行过程:</div>
             <div class="space-y-1">
-              <div 
-                v-for="process in workflowProcess" 
+              <div
+                v-for="process in workflowProcess"
                 :key="process.id"
                 class="flex items-center space-x-2 text-sm"
               >
-                <Icon 
-                  :icon="getProcessIcon(process.status)" 
+                <Icon
+                  :icon="getProcessIcon(process.status)"
                   :class="getProcessIconColor(process.status)"
                 />
                 <span>{{ process.title }}</span>
@@ -94,8 +102,8 @@
           <div v-if="citation?.length" class="space-y-2">
             <div class="text-sm font-medium text-gray-700">参考资料:</div>
             <div class="space-y-1">
-              <div 
-                v-for="cite in citation" 
+              <div
+                v-for="cite in citation"
                 :key="cite.id"
                 class="bg-blue-50 border border-blue-200 rounded p-2 text-sm"
               >
@@ -110,15 +118,15 @@
             <div class="text-sm font-medium text-gray-700">相关文件:</div>
             <div class="space-y-2">
               <template v-if="allFiles?.length">
-                <div 
-                  v-for="fileGroup in allFiles" 
+                <div
+                  v-for="fileGroup in allFiles"
                   :key="fileGroup.varName"
                   class="space-y-1"
                 >
                   <div class="text-xs text-gray-500">{{ fileGroup.varName }}</div>
                   <div class="space-y-1">
-                    <div 
-                      v-for="file in fileGroup.list" 
+                    <div
+                      v-for="file in fileGroup.list"
                       :key="file.id"
                       class="flex items-center justify-between bg-white border rounded p-2"
                     >
@@ -126,18 +134,18 @@
                         <Icon icon="ri:file-line" class="w-4 h-4 text-gray-500" />
                         <span class="text-sm">{{ file.name }}</span>
                       </div>
-                      <button class="text-blue-600 hover:text-blue-700 text-sm">
+                      <NButton type="primary" size="tiny" quaternary>
                         下载
-                      </button>
+                      </NButton>
                     </div>
                   </div>
                 </div>
               </template>
-              
+
               <template v-if="messageFiles?.length">
                 <div class="space-y-1">
-                  <div 
-                    v-for="file in messageFiles" 
+                  <div
+                    v-for="file in messageFiles"
                     :key="file.id"
                     class="flex items-center justify-between bg-white border rounded p-2"
                   >
@@ -145,9 +153,9 @@
                       <Icon icon="ri:file-line" class="w-4 h-4 text-gray-500" />
                       <span class="text-sm">{{ file.name }}</span>
                     </div>
-                    <button class="text-blue-600 hover:text-blue-700 text-sm">
+                    <NButton type="primary" size="tiny" quaternary>
                       下载
-                    </button>
+                    </NButton>
                   </div>
                 </div>
               </template>
@@ -158,35 +166,45 @@
           <div v-if="suggestedQuestions?.length" class="space-y-2">
             <div class="text-sm font-medium text-gray-700">相关问题:</div>
             <div class="space-y-1">
-              <button
+              <NButton
                 v-for="question in suggestedQuestions"
                 :key="question"
-                class="block w-full text-left bg-white border border-gray-200 rounded p-2 hover:bg-gray-50 text-sm"
+                type="default"
+                size="small"
+                class="w-full justify-start"
                 @click="$emit('askQuestion', question)"
               >
                 {{ question }}
-              </button>
+              </NButton>
             </div>
           </div>
         </div>
 
         <!-- 操作按钮 -->
         <div class="flex justify-end mt-3 space-x-1">
-          <button
-            class="p-1 hover:bg-white hover:bg-opacity-80 rounded"
+          <NButton
+            type="default"
+            size="tiny"
+            quaternary
             @click="handleCopy"
             title="复制"
           >
-            <Icon icon="ri:clipboard-line" class="w-4 h-4 text-gray-600" />
-          </button>
-          <button
+            <template #icon>
+              <Icon icon="ri:clipboard-line" class="w-4 h-4 text-gray-600" />
+            </template>
+          </NButton>
+          <NButton
             v-if="!noChatInput"
-            class="p-1 hover:bg-white hover:bg-opacity-80 rounded"
+            type="default"
+            size="tiny"
+            quaternary
             @click="handleRegenerate"
             title="重新生成"
           >
-            <Icon icon="ri:refresh-line" class="w-4 h-4 text-gray-600" />
-          </button>
+            <template #icon>
+              <Icon icon="ri:refresh-line" class="w-4 h-4 text-gray-600" />
+            </template>
+          </NButton>
         </div>
       </div>
     </div>
@@ -197,6 +215,7 @@
 import { ref, computed, onMounted, nextTick } from 'vue'
 import { marked } from 'marked'
 import copy from 'copy-to-clipboard'
+import { NButton } from 'naive-ui'
 import LoadingAnim from '../loading-anim/index.vue'
 import { useToast } from '@/components/base/toast/useToast'
 

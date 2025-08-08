@@ -36,7 +36,7 @@
           <div class="font-medium mb-1">聊天变量使用说明：</div>
           <ul class="text-xs space-y-1">
             <li>• 用于在对话过程中存储和传递数据</li>
-            <li>• 可以在工作流节点中通过 {{conversation.变量名}} 引用</li>
+            <li>• 可以在工作流节点中通过  引用</li>
             <li>• 支持字符串、数字、数组等多种数据类型</li>
           </ul>
         </div>
@@ -51,14 +51,14 @@
 
     <!-- 添加按钮 -->
     <div class="shrink-0 px-4 pb-3 pt-2">
-      <Button
+      <NButton
         variant="primary"
         size="small"
         @click="openAddModal"
       >
         <Icon icon="ri:add-line" class="h-4 w-4 mr-1" />
         添加变量
-      </Button>
+      </NButton>
     </div>
 
     <!-- 变量列表 -->
@@ -108,12 +108,12 @@
       </div>
 
       <template #footer>
-        <Button variant="secondary" @click="showDeleteConfirm = false">
+        <NButton variant="secondary" @click="showDeleteConfirm = false">
           取消
-        </Button>
-        <Button variant="warning" @click="confirmDelete">
+        </NButton>
+        <NButton variant="warning" @click="confirmDelete">
           确认删除
-        </Button>
+        </NButton>
       </template>
     </Modal>
   </div>
@@ -121,7 +121,7 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import Button from '@/components/base/button/index.vue'
+import { NButton } from 'naive-ui'
 import Modal from '@/components/base/modal/index.vue'
 import VariableItem from './variable-item.vue'
 import VariableModal from './variable-modal.vue'

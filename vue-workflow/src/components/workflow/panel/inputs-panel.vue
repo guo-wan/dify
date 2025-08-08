@@ -25,7 +25,7 @@
 
     <!-- 运行按钮 -->
     <div class="flex items-center justify-between px-4 py-2">
-      <Button
+      <NButton
         variant="primary"
         :disabled="!canRun || isRunning"
         :loading="isRunning"
@@ -33,7 +33,7 @@
         @click="doRun"
       >
         {{ isRunning ? '运行中...' : '开始运行' }}
-      </Button>
+      </NButton>
     </div>
   </div>
 </template>
@@ -43,7 +43,7 @@ import { ref, computed, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useWorkflowStore } from '@/stores/workflow'
 import { WorkflowRunningStatus, BlockEnum } from '@/utils/types/workflow'
-import Button from '@/components/base/button/index.vue'
+import { NButton } from 'naive-ui'
 import FormItem from './form-item.vue'
 import { useToast } from '@/components/base/toast/useToast'
 

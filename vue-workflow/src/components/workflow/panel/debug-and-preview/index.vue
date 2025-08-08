@@ -14,7 +14,7 @@
     <!-- 头部工具栏 -->
     <div class="panel-header flex shrink-0 items-center justify-between p-4 border-b border-gray-200">
       <div class="header-left flex items-center">
-        <h2 class="text-lg font-semibold text-gray-900">调试和预览</h2>
+        <h2 class="text-lg font-semibold text-gray-900">调试</h2>
 
         <!-- 变量统计 -->
         <div v-if="visibleVariables.length" class="ml-3 text-sm text-gray-500">

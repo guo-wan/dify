@@ -1,7 +1,6 @@
 <script setup>
 import { ref } from 'vue'
 import { useWorkflowStore } from './stores/workflow'
-import Button from './components/base/button/index.vue'
 import Loading from './components/base/loading/index.vue'
 import LoadingAnim from './components/base/chat/loading-anim/index.vue'
 import WorkflowPreview from './components/workflow/panel/workflow-preview.vue'
@@ -19,7 +18,7 @@ import Thought from './components/base/chat/thought/index.vue'
 import ContentSwitch from './components/base/chat/content-switch/index.vue'
 import ChatContext from './components/base/chat/context/index.vue'
 import { useToast } from './components/base/toast/useToast'
-import { NConfigProvider } from 'naive-ui'
+import { NConfigProvider, NMessageProvider } from 'naive-ui'
 import { WorkflowRunningStatus } from './utils/types/workflow'
 
 const store = useWorkflowStore()
@@ -309,232 +308,234 @@ setupTestData()
 
 <template>
   <n-config-provider>
-    <div class="min-h-screen bg-gray-100 p-8">
-      <div class="max-w-6xl mx-auto space-y-8">
-        <h1 class="text-3xl font-bold text-gray-900">Dify Vue Workflow 组件测试</h1>
+    <n-message-provider>
+      <div class="min-h-screen bg-gray-100 p-8">
+        <div class="max-w-6xl mx-auto space-y-8">
+          <h1 class="text-3xl font-bold text-gray-900">Dify Vue Workflow 组件测试</h1>
 
-        <!-- 基础组件测试 -->
-        <div class="bg-white p-6 rounded-lg shadow">
-          <h2 class="text-xl font-semibold mb-4">基础组件</h2>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- Button 测试 -->
-            <div>
-              <h3 class="font-medium mb-3">Button 组件</h3>
-              <div class="space-x-2 space-y-2">
-                <Button variant="primary" @click="showToast('success')">Primary</Button>
-                <Button variant="secondary" @click="showToast('info')">Secondary</Button>
-                <Button variant="warning" @click="showToast('warning')">Warning</Button>
-                <Button variant="ghost" @click="showToast('error')">Ghost</Button>
-                <Button variant="primary" :loading="true" size="small">Loading</Button>
+          <!-- 基础组件测试 -->
+          <div class="bg-white p-6 rounded-lg shadow">
+            <h2 class="text-xl font-semibold mb-4">基础组件</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <!-- NButton 测试 -->
+              <div>
+                <h3 class="font-medium mb-3">NButton 组件</h3>
+                <div class="space-x-2">
+                  <NButton type="primary" @click="showToast('success')">Primary</NButton>
+                  <NButton type="default" @click="showToast('info')">Secondary</NButton>
+                  <NButton type="warning" @click="showToast('warning')">Warning</NButton>
+                  <NButton ghost @click="showToast('error')">Ghost</NButton>
+                  <NButton type="primary">Loading</NButton>
+                </div>
               </div>
-            </div>
 
-            <!-- Loading 测试 -->
-            <div>
-              <h3 class="font-medium mb-3">Loading 组件</h3>
-              <div class="flex items-center space-x-4">
-                <Loading type="area" />
-                <LoadingAnim type="text" />
-                <LoadingAnim type="avatar" />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- 聊天组件测试 -->
-        <div class="bg-white p-6 rounded-lg shadow">
-          <h2 class="text-xl font-semibold mb-4">聊天组件</h2>
-          <div class="space-y-4 max-w-2xl">
-            <Question
-              :item="testChatItem"
-              @regenerate="(item, data) => console.log('Regenerate:', item, data)"
-            />
-            <Answer
-              :item="testAnswerItem"
-              question="测试问题"
-              :index="1"
-              @regenerate="(item) => console.log('Regenerate answer:', item)"
-              @ask-question="(question) => console.log('Ask:', question)"
-            />
-          </div>
-        </div>
-
-                <!-- Workflow组件测试 -->
-        <div class="bg-white p-6 rounded-lg shadow">
-          <h2 class="text-xl font-semibold mb-4">Workflow 组件</h2>
-
-          <!-- 控制按钮 -->
-          <div class="mb-4 flex flex-wrap gap-2">
-            <Button
-              variant="secondary"
-              size="small"
-              @click="store.setShowDebugAndPreviewPanel(!store.showDebugAndPreviewPanel)"
-            >
-              {{ store.showDebugAndPreviewPanel ? '隐藏' : '显示' }} 预览面板
-            </Button>
-            <Button
-              variant="secondary"
-              size="small"
-              @click="store.setShowEnvPanel(!store.showEnvPanel)"
-            >
-              {{ store.showEnvPanel ? '隐藏' : '显示' }} 环境面板
-            </Button>
-            <Button
-              variant="secondary"
-              size="small"
-              @click="toggleChatRecord"
-            >
-              {{ showChatRecord ? '隐藏' : '显示' }} 聊天记录
-            </Button>
-                        <Button
-              variant="secondary"
-              size="small"
-              @click="toggleChatVariable"
-            >
-              {{ showChatVariable ? '隐藏' : '显示' }} 聊天变量
-            </Button>
-            <Button
-              variant="secondary"
-              size="small"
-              @click="toggleDebugAndPreview"
-            >
-              {{ showDebugAndPreview ? '隐藏' : '显示' }} 调试预览
-            </Button>
-            <Button
-              variant="secondary"
-              size="small"
-              @click="toggleVersionHistory"
-            >
-              {{ showVersionHistory ? '隐藏' : '显示' }} 版本历史
-            </Button>
-          </div>
-
-          <!-- 工作流面板容器 -->
-          <div class="relative h-96 bg-gray-50 rounded-lg overflow-hidden">
-            <!-- 工作流预览面板 -->
-            <WorkflowPreview v-if="store.showDebugAndPreviewPanel" />
-
-            <!-- 环境面板 -->
-            <div v-if="store.showEnvPanel" class="absolute right-0 top-0 h-full">
-              <EnvPanel />
-            </div>
-
-            <!-- 聊天记录面板 -->
-            <div v-if="showChatRecord" class="absolute right-0 top-0 h-full">
-              <ChatRecord />
-            </div>
-
-                        <!-- 聊天变量面板 -->
-            <div v-if="showChatVariable" class="absolute right-0 top-0 h-full">
-              <ChatVariablePanel />
-            </div>
-
-            <!-- 调试预览面板 -->
-            <div v-if="showDebugAndPreview" class="absolute right-0 top-0 h-full">
-              <DebugAndPreview />
-            </div>
-
-            <!-- 版本历史面板 -->
-            <div v-if="showVersionHistory" class="absolute right-0 top-0 h-full">
-              <VersionHistoryPanel />
-            </div>
-
-            <!-- 提示信息 -->
-            <div v-if="!store.showDebugAndPreviewPanel && !store.showEnvPanel && !showChatRecord && !showChatVariable && !showDebugAndPreview && !showVersionHistory"
-                 class="flex items-center justify-center h-full text-gray-500">
-              <div class="text-center">
-                <Icon icon="ri:layout-grid-line" class="h-12 w-12 mx-auto mb-2 text-gray-300" />
-                <p>点击上方按钮显示不同的面板组件</p>
+              <!-- Loading 测试 -->
+              <div>
+                <h3 class="font-medium mb-3">Loading 组件</h3>
+                <div class="flex items-center space-x-4">
+                  <Loading type="area" />
+                  <LoadingAnim type="text" />
+                  <LoadingAnim type="avatar" />
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <!-- 新增聊天组件测试 -->
-        <div class="bg-white p-6 rounded-lg shadow">
-          <h2 class="text-xl font-semibold mb-4">新增聊天组件</h2>
-
-          <!-- Citation 引用组件 -->
-          <div class="mb-6">
-            <h3 class="text-lg font-medium mb-2">Citation 引用组件</h3>
-            <Citation :data="testCitationData" :show-hit-info="true" />
+          <!-- 聊天组件测试 -->
+          <div class="bg-white p-6 rounded-lg shadow">
+            <h2 class="text-xl font-semibold mb-4">聊天组件</h2>
+            <div class="space-y-4 max-w-2xl">
+              <Question
+                :item="testChatItem"
+                @regenerate="(item, data) => console.log('Regenerate:', item, data)"
+              />
+              <Answer
+                :item="testAnswerItem"
+                question="测试问题"
+                :index="1"
+                @regenerate="(item) => console.log('Regenerate answer:', item)"
+                @ask-question="(question) => console.log('Ask:', question)"
+              />
+            </div>
           </div>
 
-          <!-- Thought 思考过程组件 -->
-          <div class="mb-6">
-            <h3 class="text-lg font-medium mb-2">Thought 思考过程组件</h3>
-            <Thought :thought="testThoughtData" :is-finished="true" />
+                  <!-- Workflow组件测试 -->
+          <div class="bg-white p-6 rounded-lg shadow">
+            <h2 class="text-xl font-semibold mb-4">Workflow 组件</h2>
+
+            <!-- 控制按钮 -->
+            <div class="mb-4 flex flex-wrap gap-2">
+              <NButton
+                type="default"
+                size="small"
+                @click="store.setShowDebugAndPreviewPanel(!store.showDebugAndPreviewPanel)"
+              >
+                {{ store.showDebugAndPreviewPanel ? '隐藏' : '显示' }} 预览面板
+              </NButton>
+              <NButton
+                type="default"
+                size="small"
+                @click="store.setShowEnvPanel(!store.showEnvPanel)"
+              >
+                {{ store.showEnvPanel ? '隐藏' : '显示' }} 环境面板
+              </NButton>
+              <NButton
+                type="default"
+                size="small"
+                @click="toggleChatRecord"
+              >
+                {{ showChatRecord ? '隐藏' : '显示' }} 聊天记录
+              </NButton>
+                          <NButton
+                type="default"
+                size="small"
+                @click="toggleChatVariable"
+              >
+                {{ showChatVariable ? '隐藏' : '显示' }} 聊天变量
+              </NButton>
+              <NButton
+                type="default"
+                size="small"
+                @click="toggleDebugAndPreview"
+              >
+                {{ showDebugAndPreview ? '隐藏' : '显示' }} 调试预览
+              </NButton>
+              <NButton
+                type="default"
+                size="small"
+                @click="toggleVersionHistory"
+              >
+                {{ showVersionHistory ? '隐藏' : '显示' }} 版本历史
+              </NButton>
+            </div>
+
+            <!-- 工作流面板容器 -->
+            <div class="relative h-[800px] bg-gray-50 rounded-lg overflow-hidden">
+              <!-- 工作流预览面板 -->
+              <WorkflowPreview v-if="store.showDebugAndPreviewPanel" />
+
+              <!-- 环境面板 -->
+              <div v-if="store.showEnvPanel" class="absolute right-0 top-0 h-full">
+                <EnvPanel />
+              </div>
+
+              <!-- 聊天记录面板 -->
+              <div v-if="showChatRecord" class="absolute right-0 top-0 h-full">
+                <ChatRecord />
+              </div>
+
+                          <!-- 聊天变量面板 -->
+              <div v-if="showChatVariable" class="absolute right-0 top-0 h-full">
+                <ChatVariablePanel />
+              </div>
+
+              <!-- 调试预览面板 -->
+              <div v-if="showDebugAndPreview" class="absolute right-0 top-0 h-full">
+                <DebugAndPreview />
+              </div>
+
+              <!-- 版本历史面板 -->
+              <div v-if="showVersionHistory" class="absolute right-0 top-0 h-full">
+                <VersionHistoryPanel />
+              </div>
+
+              <!-- 提示信息 -->
+              <div v-if="!store.showDebugAndPreviewPanel && !store.showEnvPanel && !showChatRecord && !showChatVariable && !showDebugAndPreview && !showVersionHistory"
+                  class="flex items-center justify-center h-full text-gray-500">
+                <div class="text-center">
+                  <Icon icon="ri:layout-grid-line" class="h-12 w-12 mx-auto mb-2 text-gray-300" />
+                  <p>点击上方按钮显示不同的面板组件</p>
+                </div>
+              </div>
+            </div>
           </div>
 
-          <!-- ContentSwitch 内容切换组件 -->
-          <div class="mb-6">
-            <h3 class="text-lg font-medium mb-2">ContentSwitch 内容切换组件</h3>
-            <ContentSwitch
-              :text-content="testContentSwitchData.textContent"
-              :structured-data="testContentSwitchData.structuredData"
-              :chart-data="testContentSwitchData.chartData"
-              :code-content="testContentSwitchData.codeContent"
-              default-tab="text"
-            />
-          </div>
+          <!-- 新增聊天组件测试 -->
+          <div class="bg-white p-6 rounded-lg shadow">
+            <h2 class="text-xl font-semibold mb-4">新增聊天组件</h2>
 
-          <!-- ChatContext 对话上下文组件 -->
-          <div class="mb-6">
-            <h3 class="text-lg font-medium mb-2">ChatContext 对话上下文组件</h3>
-            <ChatContext
-              :context-items="testContextData"
-              @remove="(id) => console.log('Remove context:', id)"
-              @clear="() => console.log('Clear all context')"
-              @export="(items) => console.log('Export context:', items)"
-            />
-          </div>
+            <!-- Citation 引用组件 -->
+            <div class="mb-6">
+              <h3 class="text-lg font-medium mb-2">Citation 引用组件</h3>
+              <Citation :data="testCitationData" :show-hit-info="true" />
+            </div>
 
-          <!-- ChatInputArea 聊天输入区域 -->
-          <div class="mb-6">
-            <h3 class="text-lg font-medium mb-2">ChatInputArea 聊天输入区域</h3>
-            <ChatInputArea
-              placeholder="输入你的消息..."
-              :show-feature-bar="true"
-              :show-file-upload="true"
-              :speech-to-text-config="{ enabled: true }"
-              @send="(query, inputs, files) => console.log('Send:', { query, inputs, files })"
-              @input-change="(variable, value) => console.log('Input change:', variable, value)"
-              @feature-bar-click="(state) => console.log('Feature bar:', state)"
-            />
-          </div>
-        </div>
+            <!-- Thought 思考过程组件 -->
+            <div class="mb-6">
+              <h3 class="text-lg font-medium mb-2">Thought 思考过程组件</h3>
+              <Thought :thought="testThoughtData" :is-finished="true" />
+            </div>
 
-        <!-- 运行结果组件测试 -->
-        <div class="bg-white p-6 rounded-lg shadow">
-          <h2 class="text-xl font-semibold mb-4">运行结果组件</h2>
-          <div class="space-y-4">
-            <div>
-              <h3 class="font-medium mb-2">正常结果</h3>
-              <ResultText
-                :outputs="'这是一个**测试输出**结果\\n\\n包含多行内容'"
-                :all-files="[{
-                  varName: 'output_files',
-                  list: [
-                    { id: '1', name: 'result.pdf' },
-                    { id: '2', name: 'data.xlsx' }
-                  ]
-                }]"
+            <!-- ContentSwitch 内容切换组件 -->
+            <div class="mb-6">
+              <h3 class="text-lg font-medium mb-2">ContentSwitch 内容切换组件</h3>
+              <ContentSwitch
+                :text-content="testContentSwitchData.textContent"
+                :structured-data="testContentSwitchData.structuredData"
+                :chart-data="testContentSwitchData.chartData"
+                :code-content="testContentSwitchData.codeContent"
+                default-tab="text"
               />
             </div>
 
-            <div>
-              <h3 class="font-medium mb-2">运行中状态</h3>
-              <ResultText :is-running="true" />
+            <!-- ChatContext 对话上下文组件 -->
+            <div class="mb-6">
+              <h3 class="text-lg font-medium mb-2">ChatContext 对话上下文组件</h3>
+              <ChatContext
+                :context-items="testContextData"
+                @remove="(id) => console.log('Remove context:', id)"
+                @clear="() => console.log('Clear all context')"
+                @export="(items) => console.log('Export context:', items)"
+              />
             </div>
 
-            <div>
-              <h3 class="font-medium mb-2">错误状态</h3>
-              <ResultText error="这是一个测试错误信息" />
+            <!-- ChatInputArea 聊天输入区域 -->
+            <div class="mb-6">
+              <h3 class="text-lg font-medium mb-2">ChatInputArea 聊天输入区域</h3>
+              <ChatInputArea
+                placeholder="输入你的消息..."
+                :show-feature-bar="true"
+                :show-file-upload="true"
+                :speech-to-text-config="{ enabled: true }"
+                @send="(query, inputs, files) => console.log('Send:', { query, inputs, files })"
+                @input-change="(variable, value) => console.log('Input change:', variable, value)"
+                @feature-bar-click="(state) => console.log('Feature bar:', state)"
+              />
+            </div>
+          </div>
+
+          <!-- 运行结果组件测试 -->
+          <div class="bg-white p-6 rounded-lg shadow">
+            <h2 class="text-xl font-semibold mb-4">运行结果组件</h2>
+            <div class="space-y-4">
+              <div>
+                <h3 class="font-medium mb-2">正常结果</h3>
+                <ResultText
+                  :outputs="'这是一个**测试输出**结果\\n\\n包含多行内容'"
+                  :all-files="[{
+                    varName: 'output_files',
+                    list: [
+                      { id: '1', name: 'result.pdf' },
+                      { id: '2', name: 'data.xlsx' }
+                    ]
+                  }]"
+                />
+              </div>
+
+              <div>
+                <h3 class="font-medium mb-2">运行中状态</h3>
+                <ResultText :is-running="true" />
+              </div>
+
+              <div>
+                <h3 class="font-medium mb-2">错误状态</h3>
+                <ResultText error="这是一个测试错误信息" />
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </n-message-provider>
   </n-config-provider>
 </template>
 
